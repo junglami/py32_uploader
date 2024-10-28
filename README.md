@@ -13,13 +13,17 @@ interface to flash hex files onto PY32 microcontrollers using the UART bootloade
 - IntelHex 
 Install the required packages using pip: 
 ```bash 
+
 pip install pyserial intelhex 
+
 ```
 
 ## Usage
 Basic usage: 
-```bash 
+```bash
+
 python flasher.py -f firmware.hex 
+
 ```
 
 ### Command Line Options
@@ -29,15 +33,20 @@ python flasher.py -f firmware.hex
 - `-f, --file`: Path to the hex file (required) 
 - `-s, --scan`: Scan for available serial ports
 
-### Examples
+### Examples:
 Flash with custom port and baud rate: 
-```
-bash 
+```bash 
+
 python flasher.py -p /dev/ttyUSB0 -b 115200 -f firmware.hex 
+
 ``` 
 Auto-scan for serial port:
  
-```bash python flasher.py -s -f firmware.hex ```
+```bash 
+
+python flasher.py -s -f firmware.hex 
+
+```
 
 ## Protocol Implementation
 The tool implements the following bootloader commands: 
