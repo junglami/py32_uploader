@@ -22,7 +22,7 @@ pip install pyserial intelhex
 Basic usage: 
 ```bash
 
-python flasher.py -f firmware.hex 
+python py32_uploader.py -f firmware.hex 
 
 ```
 
@@ -37,14 +37,14 @@ python flasher.py -f firmware.hex
 Flash with custom port and baud rate: 
 ```bash 
 
-python flasher.py -p /dev/ttyUSB0 -b 115200 -f firmware.hex 
+python py32_uploader.py -p /dev/ttyUSB0 -b 115200 -f firmware.hex 
 
 ``` 
 Auto-scan for serial port:
  
 ```bash 
 
-python flasher.py -s -f firmware.hex 
+python py32_uploader.py -s -f firmware.hex 
 
 ```
 
