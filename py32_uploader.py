@@ -88,15 +88,14 @@ class Flasher:
             address & 0xFF
         ]
 
-        # Send address bytes
-        self.ser.write(bytes(address_bytes))
-
         # Calculate and send XOR of address bytes
         xor = 0
         for byte in address_bytes:
             xor ^= byte
-        self.ser.write(bytes([xor]))
 
+        # Send address bytes
+        self.ser.write(bytes(address_bytes))
+        self.ser.write(bytes([xor]))
         # Wait for ACK/NACK
         response = self.ser.read(1)
         if not response or response[0] == NACK:
@@ -198,8 +197,6 @@ class Flasher:
         # Send address bytes
         self.ser.write(bytes(address_bytes))
 
-        time.sleep(0.001)
-
         # Calculate and send XOR of address bytes
         xor = 0
         for byte in address_bytes:
@@ -216,6 +213,8 @@ class Flasher:
         n_minus_1 = (number_of_bytes - 1) & 0xFF
         checksum = 0 ^ n_minus_1
         self.ser.write(bytes([n_minus_1]))
+
+        time.sleep(0.0008)
 
         # Step 4: Send N data bytes:
         for byte in payload:
@@ -270,6 +269,30 @@ class Flasher:
             return -1
         return 1
 
+    def erase_full_chip(self):
+        '''
+        Erase full chip
+        :return:
+        '''
+
+        # Write erase command and checksum:
+        self.ser.write(bytes([0x44, 0xBB]))
+
+        # Wait for ACK/NACK
+        response = self.ser.read(1)
+        if not response or response[0] == 0x1F:
+            return -1
+
+        # Send special code to erase full chip and checksum:
+        self.ser.write(bytes([0xFF, 0xFF, 0x00]))
+
+        # Wait for ACK/NACK:
+        response = self.ser.read(1)
+        if not response or response[0] == 0x1F:
+            return -1
+
+        return 1
+
     def flash_hex(self, filepath):
         # Load hex file
         print(f"Loading hex file: {filepath}")
@@ -294,7 +317,7 @@ class Flasher:
             print("flashing address: ", hex(address))
 
         # Give some time...
-        time.sleep(0.05)
+        time.sleep(0.08)
 
         # Second phase: Verify all data
         print("\nVerifying flash...")
@@ -378,9 +401,10 @@ def main():
     time.sleep(0.1)
     # get_response = py32.get_command()
     # print(" ".join(f"{byte:02x}" for byte in get_response))
-    # read_uid = py32.read_command(0x1FFF_0E80, 20)
+    read_uid = py32.read_command(0x1FFF_0E80, 20)
     # print(" ".join(f"{byte:02x}" for byte in read_uid))
-    # py32.sector_erase_command(10, list(range(0, 11)))
+    py32.erase_full_chip()
+    time.sleep(0.05)
     py32.flash_hex(os.path.realpath(args.file))
 
 
